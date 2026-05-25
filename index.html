@@ -27,10 +27,8 @@
 
 const { AreaChart, Area, LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } = Recharts;
 
-// ─── PASTE YOUR SUPABASE KEYS HERE ──────────────────────────────────────────
 const SUPABASE_URL = "https://dbubyjjngccitvbtcbxr.supabase.co"
 const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRidWJ5ampuZ2NjaXR2YnRjYnhyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkzNTkwNTMsImV4cCI6MjA5NDkzNTA1M30.nOCyRodiPdSjYvK59kmtHSQ5RgIbbshuxDWvsUq4sag"
-// ────────────────────────────────────────────────────────────────────────────
 
 const IS_CONFIGURED = !SUPABASE_URL.includes("YOUR_") && !SUPABASE_KEY.includes("YOUR_")
 const db = IS_CONFIGURED ? supabase.createClient(SUPABASE_URL, SUPABASE_KEY) : null
@@ -49,7 +47,6 @@ async function dbSet(key, value) {
   } catch(e) {}
 }
 
-// Accept comma or dot as decimal separator
 function parseNum(s) {
   return parseFloat(String(s).replace(",", ".")) || 0;
 }
@@ -58,40 +55,6 @@ function filterDecimalInput(val) {
   const first = v.search(/[.,]/);
   if (first !== -1) v = v.slice(0, first + 1) + v.slice(first + 1).replace(/[.,]/g, "");
   return v;
-}
-
-function SetupScreen() {
-  return (
-    <div style={{background:"#07070f",minHeight:"100vh",display:"flex",alignItems:"center",justifyContent:"center",padding:"24px",fontFamily:'-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif'}}>
-      <div style={{maxWidth:480,width:"100%"}}>
-        <div style={{color:"#4d7ef5",fontSize:11,letterSpacing:"0.12em",textTransform:"uppercase",marginBottom:8}}>Setup required</div>
-        <h1 style={{color:"#dde3f5",fontSize:24,fontWeight:700,marginBottom:8}}>Connect your database</h1>
-        <p style={{color:"#7880a0",fontSize:14,marginBottom:24,lineHeight:1.6}}>Follow these steps once to store your data in the cloud, accessible from any device.</p>
-        {[
-          {n:1,title:"Create a free Supabase account",body:'Go to supabase.com → "Start for free" → create a new project. Wait ~1 min for it to set up.'},
-          {n:2,title:"Run this SQL in Supabase",body:"Go to your project → SQL Editor → paste and run:",code:`create table if not exists workout_data (
-  key text primary key,
-  value text not null,
-  updated_at timestamptz default now()
-);
-alter table workout_data enable row level security;
-create policy "open" on workout_data
-  for all using (true) with check (true);`},
-          {n:3,title:"Copy your API keys",body:'Go to Settings → API. Copy "Project URL" and "anon public" key.'},
-          {n:4,title:"Paste keys into this file",body:'Find the two lines near the top of index.html and replace YOUR_SUPABASE_URL and YOUR_SUPABASE_ANON_KEY with your values.'},
-        ].map(step => (
-          <div key={step.n} style={{background:"#13132a",border:"1px solid #1f1f3a",borderRadius:12,padding:"16px",marginBottom:12}}>
-            <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:step.body?8:0}}>
-              <div style={{width:24,height:24,borderRadius:"50%",background:"#4d7ef5",display:"flex",alignItems:"center",justifyContent:"center",color:"#fff",fontSize:12,fontWeight:700,flexShrink:0}}>{step.n}</div>
-              <div style={{color:"#dde3f5",fontWeight:600,fontSize:14}}>{step.title}</div>
-            </div>
-            {step.body && <p style={{color:"#7880a0",fontSize:13,lineHeight:1.6,marginLeft:34,marginBottom:step.code?8:0}}>{step.body}</p>}
-            {step.code && <pre style={{background:"#0e0e1c",border:"1px solid #1f1f3a",borderRadius:8,padding:"12px",color:"#4d7ef5",fontSize:11,overflow:"auto",marginLeft:34,lineHeight:1.6}}>{step.code}</pre>}
-          </div>
-        ))}
-      </div>
-    </div>
-  );
 }
 
 const T = {
@@ -193,7 +156,6 @@ function getStreak(logs) {
   return streak;
 }
 
-// ── Muscle body SVG icon ─────────────────────────────────────────────────────
 function MuscleIcon({ muscle, size = 36 }) {
   const m = (muscle || "").toLowerCase();
   const H = "#4d7ef5";
@@ -218,39 +180,22 @@ function MuscleIcon({ muscle, size = 36 }) {
 
   return (
     <svg viewBox="0 0 40 94" width={size} height={size * 2.35} style={{display:"block",flexShrink:0}}>
-      {/* Head */}
       <circle cx="20" cy="7" r="5.5" fill={B}/>
-      {/* Neck */}
       <rect x="17.5" y="12" width="5" height="4" rx="1" fill={B}/>
-      {/* Left shoulder cap */}
       <path d="M13,16 Q8,14 6,20 L7,27 Q11,25 13,24 Z" fill={shoulderCol}/>
-      {/* Right shoulder cap */}
       <path d="M27,16 Q32,14 34,20 L33,27 Q29,25 27,24 Z" fill={shoulderCol}/>
-      {/* Left upper arm */}
       <rect x="4" y="24" width="9" height="17" rx="3.5" fill={armCol}/>
-      {/* Right upper arm */}
       <rect x="27" y="24" width="9" height="17" rx="3.5" fill={armCol}/>
-      {/* Left forearm */}
       <rect x="5" y="42" width="7" height="11" rx="2.5" fill={B}/>
-      {/* Right forearm */}
       <rect x="28" y="42" width="7" height="11" rx="2.5" fill={B}/>
-      {/* Upper torso — tapered like a torso */}
       <path d="M13,16 Q10,23 11,34 L29,34 Q30,23 27,16 Z" fill={torsoTopCol}/>
-      {/* Lower torso / abs */}
       <rect x="12" y="34" width="16" height="13" rx="2" fill={torsoBottomCol}/>
-      {/* Pelvis */}
       <rect x="11" y="47" width="18" height="5" rx="2" fill={B}/>
-      {/* Left upper leg */}
       <rect x="11" y="52" width="8" height="19" rx="3.5" fill={legCol}/>
-      {/* Right upper leg */}
       <rect x="21" y="52" width="8" height="19" rx="3.5" fill={legCol}/>
-      {/* Left calf */}
       <rect x="12" y="72" width="6.5" height="12" rx="2.5" fill={legCol}/>
-      {/* Right calf */}
       <rect x="21.5" y="72" width="6.5" height="12" rx="2.5" fill={legCol}/>
-      {/* Left foot */}
       <rect x="11" y="83" width="7.5" height="3" rx="1.5" fill={B}/>
-      {/* Right foot */}
       <rect x="21.5" y="83" width="7.5" height="3" rx="1.5" fill={B}/>
       {isBackView && (
         <text x="20" y="93" textAnchor="middle" fill="#3a405f" fontSize="5" fontFamily="sans-serif" letterSpacing="0.3">BACK</text>
@@ -258,7 +203,6 @@ function MuscleIcon({ muscle, size = 36 }) {
     </svg>
   );
 }
-// ─────────────────────────────────────────────────────────────────────────────
 
 const VolTip = ({active,payload,label}) => {
   if (!active||!payload?.length) return null;
@@ -572,7 +516,6 @@ function LogPage({logs, setLogs, routines, rc, initialRoutine}) {
         <div style={{color:T.sub,fontSize:12}}>{loggedCount}/{exercises.length}</div>
       </div>
 
-      {/* Progress bar */}
       <div style={{height:3,background:T.surface,borderRadius:2,marginBottom:16,overflow:"hidden"}}>
         <div style={{height:"100%",background:T.green,borderRadius:2,width:`${pct}%`,transition:"width 0.4s ease"}}/>
       </div>
@@ -670,7 +613,7 @@ function ManagePage({routines, setRoutines, rc, setRc}) {
       <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8}}>
         <div>
           <div style={{color:T.sub,fontSize:11,marginBottom:4}}>Sets</div>
-          <input type="text" inputMode="numeric" value={exForm.sets} onChange={e=>setExForm(f=>({...f,sets:e.target.value.replace(/[^0-9]/g,"")}))} min="1" max="10" style={iS}/>
+          <input type="text" inputMode="numeric" value={exForm.sets} onChange={e=>setExForm(f=>({...f,sets:e.target.value.replace(/[^0-9]/g,"")}))} style={iS}/>
         </div>
         <div>
           <div style={{color:T.sub,fontSize:11,marginBottom:4}}>Muscle group</div>
@@ -740,7 +683,7 @@ function ManagePage({routines, setRoutines, rc, setRc}) {
             {exFormFields}
             <div style={{display:"flex",gap:8}}>
               <button onClick={addEx} style={{flex:1,background:T.blue,color:"#fff",border:"none",borderRadius:8,padding:"9px",fontSize:13,fontWeight:600,cursor:"pointer"}}>Add Exercise</button>
-              <button onClick={()=>{setAddingEx(false);setExForm({name:"",sets:"2",muscle:"",note:""});}} style={{flex:1,background:"transparent",color:T.sub,border:`1px solid ${T.border}`,borderRadius:8,padding:"9px",fontSize:13,cursor:"pointer"}}>Cancel</button>
+              <button onClick={()=>{setAddingEx(false);setExForm({name:"",sets:"2",muscle:"",note:""}); }} style={{flex:1,background:"transparent",color:T.sub,border:`1px solid ${T.border}`,borderRadius:8,padding:"9px",fontSize:13,cursor:"pointer"}}>Cancel</button>
             </div>
           </div>
         ) : (
@@ -926,8 +869,6 @@ function App() {
 
   function handleQuickLog(routine) { setLogInitRoutine(routine); setPage("log"); }
   function handlePageChange(p) { if(p!=="log") setLogInitRoutine(null); setPage(p); }
-
-  if (!IS_CONFIGURED) return <SetupScreen />;
 
   if (!loaded) return (
     <div style={{background:T.bg,minHeight:"100vh",display:"flex",alignItems:"center",justifyContent:"center"}}>
